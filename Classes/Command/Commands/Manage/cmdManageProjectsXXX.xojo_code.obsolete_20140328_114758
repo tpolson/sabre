@@ -1,0 +1,75 @@
+#tag Class
+Protected Class cmdManageProjectsXXX
+Implements Command
+	#tag Method, Flags = &h0
+		Sub execute()
+		  if SabreDatabaseManager.Setup then
+		    
+		    // Part of the Command interface.
+		    dim cm As Command
+		    dim cmdData As New Dictionary
+		    
+		    //create new workspace
+		    cm=new cmdCreateWorkspace
+		    cm.execute
+		    
+		    //update buttons
+		    cmdData.Value(kCMD_PROJECT_LIST)=kPROJECT_NEW+DL+kPROJECT_EDIT+DL+kPROJECT_DELETE+DL+kPROJECT_ARCHIVE
+		    cmdData.Value(kCMD_PAGETYPE)=kPG_MANAGE_PROJECTS
+		    cmdData.Value(kCMD_CONTROL)=ccWorkspace
+		    
+		    cm =new cmdMenuUpdatePage(cmdData)
+		    cm.execute
+		    
+		    //update list
+		    cmdData.Clear
+		    cmdData.Value(kCMD_PROJECT_LIST)=SabreDatabaseManager.ProjectsList
+		    cmdData.Value(kCMD_CONTROL)=ccWorkspace
+		    
+		    'cm=New cmdManageProjectsListboxUpdate(cmdData)
+		    cm.execute
+		    
+		    ccWorkspace.Visible=True
+		    
+		  end if
+		End Sub
+	#tag EndMethod
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

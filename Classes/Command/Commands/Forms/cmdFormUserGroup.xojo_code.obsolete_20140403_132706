@@ -1,0 +1,150 @@
+#tag Class
+Protected Class cmdFormUserGroup
+Implements Command
+	#tag Method, Flags = &h0
+		Sub Constructor(ByRef data As Dictionary)
+		  me.data=data
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub execute()
+		  //Part of the Command interface.
+		  Dim tableInfo() as String=SabreDatabaseManager.ShowUsers
+		  dim ccUI As ccUI_Control=data.Value(kCMD_CONTROL)
+		  Dim columns As String
+		  
+		  columns=tableInfo(0)
+		  
+		  If columns<>"" Then
+		    Dim i As Integer
+		    
+		    ccForm = New ccUI_Control
+		    
+		    //update buttons
+		    ccForm.menuButtonCount=columns.CountFields(DL)
+		    ccForm.addControls(ccForm.menuButtonCount, ccUI.formLabel(0))
+		    ccForm.addControls(ccForm.menuButtonCount, ccUI.inputField(0))
+		    ccForm.Tag=kPG_MANAGE_USERS_GROUPS
+		    
+		    //add form
+		    'ccForm.EmbedWithin ccUI, ccUI.dataListbox(0).Left+ccUI.dataListbox(0).Width+defaultButtonWidth, ccUI.dataListbox(0).Top-defaultFieldHeight,defaultButtonWidth+(defaultFieldWidth*2)+(defaultTopMargin*4), defaultButtonHeight*(ccForm.menuButtonCount+4)
+		    
+		    //add form
+		    dim formLeft As Integer=ccUI.ccDisplay(1).ScrollVertical.Left+ccUI.ccDisplay(1).ScrollVertical.Width+defaultSidebarWidth+defaultButtonHeight
+		    dim formTop As Integer=ccUI.ccDisplay(1).dataListbox(0).Top+defaultButtonHeight
+		    dim formWidth As Integer=defaultButtonWidth+(defaultFieldWidth*2)+(defaultTopMargin*4)
+		    dim formHeight As Integer=defaultButtonHeight*(ccForm.menuButtonCount+4)
+		    
+		    ccForm.EmbedWithin ccUI, formLeft, formTop, formWidth, formHeight
+		    
+		    //form title
+		    ccForm.formLabel(0).Top=0
+		    ccForm.formLabel(0).Left=defaultFieldWidth+defaultTopMargin
+		    ccForm.formLabel(0).Width=defaultFieldWidth*2
+		    ccForm.formLabel(0).Height=defaultFieldHeight
+		    ccForm.formLabel(0).Text=kPG_MANAGE_USERS_GROUPS
+		    ccForm.formLabel(0).TextLeft
+		    ccForm.formLabel(0).LockBottom=False
+		    ccForm.formLabel(0).LockLeft=True
+		    ccForm.formLabel(0).LockRight=True
+		    ccForm.formLabel(0).LockTop=True
+		    ccForm.formLabel(0).Visible=True
+		    
+		    //form fields
+		    for i =1 to ccForm.menuButtonCount
+		      ccForm.formLabel(i).Top=((defaultFieldHeight+defaultTopMargin)*i)
+		      ccForm.formLabel(i).Left=0
+		      ccForm.formLabel(i).Width=defaultFieldWidth
+		      ccForm.formLabel(i).Height=defaultFieldHeight
+		      ccForm.formLabel(i).Text=columns.NthField(DL,i).Trim.titleString
+		      ccForm.formLabel(i).TextRight
+		      ccForm.formLabel(i).Visible=True
+		      
+		      ccForm.inputField(i).Left=ccForm.formLabel(0).Left
+		      ccForm.inputField(i).Top=ccForm.formLabel(i).Top
+		      ccForm.inputField(i).Height=defaultFieldHeight
+		      ccForm.inputField(i).Width=defaultFieldWidth*2
+		      ccForm.inputField(i).Tag=columns.NthField(DL,i).Trim
+		      ccForm.inputField(i).TabStop=True
+		      ccForm.inputField(i).TabIndex=i
+		      ccForm.inputField(i).Visible=True
+		      
+		    next i
+		    
+		    ccForm.addControls(1,ccUI.menuButton(0))
+		    
+		    //form buttons
+		    ccForm.menuButton(0).Top=ccForm.inputField(i-1).Top+defaultButtonHeight+defaultButtonSpace
+		    ccForm.menuButton(0).Left=0
+		    ccForm.menuButton(0).Width=defaultButtonWidth*2
+		    ccForm.menuButton(0).Height=defaultButtonHeight
+		    ccForm.menuButton(0).Caption=kPROJECT_CREATE
+		    ccForm.menuButton(0).LockBottom=False
+		    ccForm.menuButton(0).LockLeft=True
+		    ccForm.menuButton(0).LockRight=False
+		    ccForm.menuButton(0).LockTop=True
+		    ccForm.menuButton(0).Visible=True
+		    
+		    ccForm.menuButton(1).Top=ccForm.menuButton(0).Top
+		    ccForm.menuButton(1).Left=ccForm.formLabel(0).Left+ccForm.formLabel(0).Width-defaultButtonWidth
+		    ccForm.menuButton(1).Width=defaultButtonWidth
+		    ccForm.menuButton(1).Height=defaultButtonHeight
+		    ccForm.menuButton(1).Caption=kCLOSE
+		    ccForm.menuButton(1).LockBottom=False
+		    ccForm.menuButton(1).LockLeft=True
+		    ccForm.menuButton(1).LockRight=False
+		    ccForm.menuButton(1).LockTop=True
+		    ccForm.menuButton(1).Visible=True
+		    
+		    ccForm.Visible=True
+		    
+		    
+		  End If
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		data As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

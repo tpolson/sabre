@@ -1,0 +1,127 @@
+#tag Class
+Protected Class cmdUpdateMenuPage
+Implements Command
+	#tag Method, Flags = &h0
+		Sub Constructor(ByRef data As Dictionary)
+		  me.data=data
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub execute()
+		  // Part of the Command interface.
+		  dim menuItems As String=data.Value(kCMD_PROJECT_LIST)
+		  dim page As String=data.Value(kCMD_PAGETYPE)
+		  dim ccUI As ccUI_Control=data.Value(kCMD_CONTROL)
+		  dim projectID As String
+		  dim startCount As Integer
+		  dim i As Integer
+		  
+		  //get menu count
+		  dim menuCount As Integer=menuItems.CountFields(DL)
+		  
+		  //add enough buttons
+		  if ccUI.menuButtonCount<menuCount then ccUI.addControls(menuCount+1, ccUI.menuButton(0))
+		  
+		  //update number of buttons
+		  ccUI.menuButtonCount=menuCount
+		  
+		  //offset button position for bottom menu
+		  if ccUI.isTopMenu then startCount=0 else startCount=1
+		  
+		  //check for projectID
+		  if data.HasKey(kCMD_PROJECT_ID) then projectID=data.Value(kCMD_PROJECT_ID)
+		  
+		  //update buttons
+		  for i=0 to ccUI.menuButtonCount
+		    if i<menuCount then
+		      
+		      if menuItems.NthField(DL,i+1).CountFields(kSUBMENU)=1 then
+		        ccUI.menuButton(i).Caption=menuItems.NthField(DL,i+1).Uppercase
+		        
+		      end if
+		      
+		      ccUI.menuButton(i).Top=(defaultButtonHeight*i)+defaultButtonHeight
+		      ccUI.menuButton(i).Left=defaultTopMargin*2
+		      ccUI.menuButton(i).Width=defaultButtonWidth+defaultTopMargin*2
+		      ccUI.menuButton(i).Height=defaultButtonHeight
+		      ccUI.menuButton(i).projectID=projectID
+		      ccUI.menuButton(i).LockBottom=False
+		      ccUI.menuButton(i).LockTop=True
+		      
+		      //set ok or next button
+		      if menuItems.NthField(DL,i+1)=kOK or menuItems.NthField(DL,i+1)=kIMPORT_REVERT then
+		        ccUI.menuButton(i).Top=ccUI.Height-ccUI.menuButton(i).Height-defaultButtonHeight*2
+		        ccUI.menuButton(i).LockBottom=True
+		        ccUI.menuButton(i).LockTop=False
+		        
+		      end if
+		      
+		      //set cancel button
+		      if menuItems.NthField(DL,i+1)=kCANCEL then 'or menuItems.NthField(DL,i+1)=kMANAGE_PREFERENCES then
+		        ccUI.menuButton(i).Top=ccUI.Height-ccUI.menuButton(i).Height-defaultButtonHeight
+		        ccUI.menuButton(i).LockBottom=True
+		        ccUI.menuButton(i).LockTop=False
+		        
+		      end if
+		      
+		      //skip a button
+		      if menuItems.NthField(DL,i+1)<>kNULL then
+		        ccUI.menuButton(i).Visible=True //need to add groupID control=================================================================================================
+		      else
+		        ccUI.menuButton(i).Visible=False
+		      end if
+		      
+		    else
+		      ccUI.menuButton(i).Visible=False
+		      
+		    end if
+		    
+		  next i
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		data As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass
