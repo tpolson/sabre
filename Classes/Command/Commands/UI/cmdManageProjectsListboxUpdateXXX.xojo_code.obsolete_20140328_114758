@@ -1,0 +1,85 @@
+#tag Class
+Protected Class cmdManageProjectsListboxUpdateXXX
+Implements Command
+	#tag Method, Flags = &h0
+		Sub Constructor(ByRef data As Dictionary)
+		  me.data=data
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub execute()
+		  // Part of the Command interface.
+		  dim ccUI As ccUI_Control=data.Value(kCMD_CONTROL)
+		  dim projectList As Dictionary=data.Value(kCMD_PROJECT_LIST)
+		  dim keys() As Variant=projectList.Keys
+		  dim k As Variant
+		  dim v As String
+		  dim rowCount As Integer= projectList.Count
+		  
+		  ccUI.dataListbox(0).DeleteAllRows
+		  ccUI.dataListbox(0).Top=defaultButtonHeight
+		  ccUI.dataListbox(0).Left=defaultSidebarWidth
+		  ccUI.dataListbox(0).Width=defaultButtonWidth*2
+		  ccUI.dataListbox(0).SelectionType=Listbox.SelectionSingle
+		  
+		  if rowCount*ccUI.dataListbox(0).RowHeight>200 then ccUI.dataListbox(0).Height=ccUI.dataListbox(0).RowHeight*(rowCount+1) else ccUI.dataListbox(0).Height=200
+		  
+		  for each k in keys
+		    v=projectList.Value(k)
+		    ccUI.dataListbox(0).AddRow v
+		    ccUI.dataListbox(0).RowTag(ccUI.dataListbox(0).LastIndex)=k
+		    
+		  next
+		  
+		  ccUI.dataListbox(0).Visible=True
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		data As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

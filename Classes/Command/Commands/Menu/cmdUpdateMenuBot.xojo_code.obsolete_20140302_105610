@@ -1,0 +1,94 @@
+#tag Class
+Protected Class cmdUpdateMenuBot
+Implements Command
+	#tag Method, Flags = &h0
+		Sub Constructor(ByRef data As Dictionary)
+		  me.data=data
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub execute()
+		  // Part of the Command interface.
+		  dim menuList As Variant=data.Value(kCMD_PROJECT_LIST)
+		  dim menuItems As String
+		  dim ccUI As ccUI_Control=data.Value(kCMD_CONTROL)
+		  dim i As Integer
+		  
+		  menuItems=menuList
+		  
+		  //get menu count
+		  dim menuCount As Integer=menuItems.CountFields(DL)
+		  
+		  //add enough buttons
+		  if ccUI.menuButtonCount<menuCount then ccUI.addControls(menuCount+1, ccUI.menuButton(0))
+		  
+		  //update buttons
+		  for i=1 to ccUI.maxButtonCount
+		    if i<=menuCount then
+		      
+		      ccUI.menuButton(i).Caption=menuItems.NthField(DL,i)
+		      ccUI.menuButton(i).Left=defaultTopMargin*2+(defaultButtonWidth+defaultButtonSpace)*(i-1)
+		      ccUI.menuButton(i).Top=defaultTopMargin-4
+		      ccUI.menuButton(i).Width=defaultButtonWidth
+		      ccUI.menuButton(i).Height=defaultButtonHeight
+		      
+		      ccUI.menuButton(i).Tag=kPG_PROJECTS
+		      ccUI.menuButton(i).AllowSelectionIcon=True
+		      if menuItems.NthField(DL,i)=kNULL then ccUI.menuButton(i).Visible=False else ccUI.menuButton(i).Visible=True
+		      
+		    else
+		      ccUI.menuButton(i).AllowSelectionIcon=False
+		      ccUI.menuButton(i).Visible=False
+		      
+		    end if
+		    
+		  next i
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		data As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

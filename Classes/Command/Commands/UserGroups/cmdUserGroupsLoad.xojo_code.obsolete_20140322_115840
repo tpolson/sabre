@@ -1,0 +1,97 @@
+#tag Class
+Protected Class cmdUserGroupsLoad
+Implements Command
+	#tag Method, Flags = &h0
+		Sub Constructor(ByRef data As Dictionary)
+		  me.data=data
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub execute()
+		  if SabreDatabaseManager.Setup then
+		    
+		    // Part of the Command interface.
+		    dim cm As Command
+		    dim cmdData As New Dictionary
+		    tableColumnsCache=new Dictionary
+		    
+		    //default table columns=kDB_SCENES
+		    tableColumnsCache.Value(data.Value(kCMD_COMMAND))=SabreDatabaseManager.TableColumns(data.Value(kCMD_PROJECT_ID),kDB_SCENES)
+		    
+		    //create new workspace
+		    cm=new cmdCreateWorkspace
+		    cm.execute
+		    
+		    //update buttons
+		    cmdData.Value(kCMD_PROJECT_LIST)= kDB_SCENES+DL+kDB_SHOTS+DL+kDB_TASKS+DL+kDB_NOTES
+		    cmdData.Value(kCMD_PAGETYPE)=kPG_MANAGE_PROJECTS
+		    cmdData.Value(kCMD_CONTROL)=ccWorkspace
+		    cmdData.Value(kCMD_PROJECT_ID)=data.Value(kCMD_PROJECT_ID)
+		    
+		    cm =new cmdMenuUpdatePage(cmdData)
+		    cm.execute
+		    
+		    //load project
+		    cmdData.Clear
+		    cmdData.Value(kCMD_PROJECT_ID)=data.Value(kCMD_PROJECT_ID)
+		    cmdData.Value(kCMD_CONTROL)=ccWorkspace
+		    cmdData.Value(kCMD_COMMAND)=data.Value(kCMD_COMMAND)
+		    cmdData.Value(kCMD_TABLE_COLUMNS)=tableColumnsCache.Value(data.Value(kCMD_COMMAND))
+		    
+		    //display data
+		    'if page selected then
+		    'cm=new cmdProjectDisplayPage(cmdData)
+		    cm=new cmdProjectDisplayList(cmdData)
+		    cm.execute
+		    
+		    ccWorkspace.Visible=True
+		    
+		  end if
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		data As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

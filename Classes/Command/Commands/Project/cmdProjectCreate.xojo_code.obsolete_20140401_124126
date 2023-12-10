@@ -1,0 +1,110 @@
+#tag Class
+Protected Class cmdProjectCreate
+Implements Command
+	#tag Method, Flags = &h0
+		Sub Constructor(ByRef data As Dictionary)
+		  me.data=data
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub execute()
+		  // Part of the Command interface.
+		  #pragma DisableBackgroundTasks
+		  
+		  Dim ccUI As ccUI_Control=data.value(kCMD_CONTROL)
+		  Dim project_data As New Dictionary
+		  Dim i As Integer
+		  
+		  //check for projectname
+		  If ccUI.inputField(1).Text<>"" Then
+		    //load data into dictionary
+		    For i=1 To ccUI.menuButtonCount
+		      project_data.Value(ccUI.inputField(i).Tag)=ccUI.inputField(i).Text.Trim
+		    Next i
+		    
+		    //create new project database and update projects list
+		    If SabreDatabaseManager.ProjectNew(project_data) Then
+		      Dim cm As Command
+		      Dim cmdData As New Dictionary
+		      
+		      //update list
+		      cmdData.Clear
+		      cmdData.Value(kCMD_PROJECT_LIST)=SabreDatabaseManager.ProjectsList
+		      cmdData.Value(kCMD_CONTROL)=ccWorkspace
+		      cmdData.Value(kCMD_COMMAND)=kMANAGE_PROJECTS
+		      
+		      cm=New cmdManageDisplayUpdate(cmdData)
+		      cm.execute
+		      
+		      //update menu
+		      cmdData.Value(kCMD_PROJECT_LIST)=SabreDatabaseManager.ProjectsList
+		      cmdData.Value(kCMD_PAGETYPE)=kPG_PROJECTS
+		      cmdData.Value(kCMD_CONTROL)=ccMenu(0)
+		      
+		      cm=New cmdMenuUpdateTop(cmdData)
+		      cm.execute
+		      
+		      ccUI.Close
+		      
+		    Else
+		      
+		      msg "NEW PROJECT FAILED"
+		      
+		    End If
+		    
+		    
+		  Else
+		    msg kWARNING_PROJECT_NAME
+		    
+		  End If
+		  
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		data As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

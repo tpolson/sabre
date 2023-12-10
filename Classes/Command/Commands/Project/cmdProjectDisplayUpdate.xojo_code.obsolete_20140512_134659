@@ -1,0 +1,82 @@
+#tag Class
+Protected Class cmdProjectDisplayUpdate
+Implements Command
+	#tag Method, Flags = &h0
+		Sub Constructor(ByRef Data As Dictionary)
+		  me.data=data
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub execute()
+		  // Part of the Command interface.
+		  #pragma DisableBackgroundTasks
+		  
+		  dim cm As Command
+		  dim cmdData As new Dictionary
+		  dim ccUI As ccUI_Control=data.Value(kCMD_CONTROL)
+		  
+		  //get schema
+		  cmdData.Value(kCMD_PROJECT_ID)=data.Value(kCMD_PROJECT_ID)
+		  
+		  cmdData.Value(kCMD_CONTROL)=ccUI
+		  cmdData.Value(kCMD_COMMAND)=data.Value(kCMD_COMMAND)
+		  cmdData.Value(kCMD_TABLE_NAME)=data.Value(kCMD_COMMAND) 'kDB_SCENES ////////////////////////////////////////add default variable to store in db
+		  cmdData.Value(kCMD_TABLE_COLUMNS)=data.Value(kCMD_TABLE_COLUMNS)
+		  
+		  //update header
+		  cm=new cmdListboxHeader(cmdData)
+		  cm.execute
+		  
+		  //get table data
+		  cm=new cmdListboxUpdate(cmdData)
+		  cm.execute
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		data As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass
